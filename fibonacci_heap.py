@@ -87,9 +87,6 @@ class FibonacciHeap(Heap):
 
         return self.find_min()
 
-
-        # return min_value
-
     def merge(self, fibonnaci_heap: Heap) -> None:
         """
         Fusionne deux arbres
