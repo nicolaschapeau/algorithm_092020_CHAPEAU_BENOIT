@@ -149,4 +149,3 @@ fheap.merge(fheap)
 print('Last load  :', fheap.trees)
 
 print('Delete min value, new min value :', fheap.delete_min())
-
