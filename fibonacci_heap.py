@@ -61,10 +61,7 @@ class FibonacciHeap(Heap):
         self.trees = []
         self.least = None
         self.count = 0
-
-    def __repr__(self):
-        return repr(self.trees)
-
+        
     def insert(self, value: int) -> None:
         """
         Ajoute une valeur dans l'arbre
@@ -72,22 +69,32 @@ class FibonacciHeap(Heap):
         new_tree = Tree()
         new_tree.add_value(value)
         self.trees.append(new_tree)
-        self.count = self.count + 1
-        #
-        # print(f'Value {value} added. ')
+        self.count += 1
         pass
 
     def find_min(self) -> int:
         """
         Retourne la valeur minimum dans l'arbre
         """
-        pass
+        return int(min(z.children[0] for z in self.trees))
 
     def delete_min(self) -> int:
         """
         Supprime et retourne la valeur minimum dans l'arbre
         """
-        pass
+        min_value = self.find_min()
+
+        for index, tree in enumerate(self.trees):
+            if tree.children[0] == min_value:
+                self.trees.remove(tree)
+                tree.children.remove(0)
+                for subtree in tree.children:
+                    self.trees.insert(index, subtree)
+
+        return self.find_min()
+
+
+        # return min_value
 
     def decrease_key(self, current_value: int, new_value :int) -> None:
         """
@@ -123,37 +130,38 @@ class FibonacciHeap(Heap):
         pass
 
 
+
+# Création de l'arbre
 fheap = FibonacciHeap()
+
+# Définition des valeurs de départ
 data = [1, 3, 12, 31, 5, 8, 11, 4, 0, 7]
 
-
-
+# Ajout de chaque valeur dans l'arbre
 for value in data:
     fheap.insert(value)
 
-print('0  :', fheap.trees)
+print('First load :', fheap.trees)
+
 fheap.merge(fheap)
-print('1  :', fheap.trees)
-fheap.merge(fheap)
-print('2  :', fheap.trees)
-fheap.merge(fheap)
-print('3  :', fheap.trees)
-fheap.merge(fheap)
-print('4  :', fheap.trees)
-fheap.merge(fheap)
-print('5  :', fheap.trees)
-fheap.merge(fheap)
-print('6  :', fheap.trees)
-fheap.merge(fheap)
-print('7  :', fheap.trees)
-fheap.merge(fheap)
-print('8  :', fheap.trees)
 # print(fheap.trees)
-# fheap.merge(fheap)
+fheap.merge(fheap)
 # print(fheap.trees)
+fheap.merge(fheap)
+# print(fheap.trees)
+fheap.merge(fheap)
+# print(fheap.trees)
+fheap.merge(fheap)
+# print(fheap.trees)
+fheap.merge(fheap)
+# print(fheap.trees)
+fheap.merge(fheap)
+# print(fheap.trees)
+fheap.merge(fheap)
 
+print('Last load  :', fheap.trees)
 
+print('Minimum value :', fheap.find_min())
 
-# print(f'Nbr of trees : {fheap.count}')
+print('Delete min value, new min value :', fheap.delete_min())
 
-# print(fheap.find_min())
