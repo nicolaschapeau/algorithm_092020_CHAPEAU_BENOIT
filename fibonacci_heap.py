@@ -24,12 +24,6 @@ class Heap(object):
         """
         pass
 
-    def decrease_key(self, current_value: int, new_value :int) -> None:
-        """
-        Modify une valeur dans l'arbre
-        """
-        pass
-
     def merge(self, fibonnaci_heap: object) -> None:
         """
         Fusionne deux arbres
@@ -59,7 +53,6 @@ class FibonacciHeap(Heap):
 
     def __init__(self):
         self.trees = []
-        self.least = None
         self.count = 0
         
     def insert(self, value: int) -> None:
@@ -76,7 +69,7 @@ class FibonacciHeap(Heap):
         """
         Retourne la valeur minimum dans l'arbre
         """
-        return int(min(z.children[0] for z in self.trees))
+        return int(min(tree.children[0] for tree in self.trees))
 
     def delete_min(self) -> int:
         """
@@ -90,17 +83,12 @@ class FibonacciHeap(Heap):
                 tree.children.remove(0)
                 for subtree in tree.children:
                     self.trees.insert(index, subtree)
+                    # Modifier le self.count
 
         return self.find_min()
 
 
         # return min_value
-
-    def decrease_key(self, current_value: int, new_value :int) -> None:
-        """
-        Modifie une valeur dans l'arbre
-        """
-        pass
 
     def merge(self, fibonnaci_heap: Heap) -> None:
         """
@@ -143,6 +131,8 @@ for value in data:
 
 print('First load :', fheap.trees)
 
+print('Minimum value :', fheap.find_min())
+
 fheap.merge(fheap)
 # print(fheap.trees)
 fheap.merge(fheap)
@@ -160,8 +150,6 @@ fheap.merge(fheap)
 fheap.merge(fheap)
 
 print('Last load  :', fheap.trees)
-
-print('Minimum value :', fheap.find_min())
 
 print('Delete min value, new min value :', fheap.delete_min())
 
