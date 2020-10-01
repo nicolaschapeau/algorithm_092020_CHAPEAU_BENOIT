@@ -54,7 +54,11 @@ class FibonacciHeap(Heap):
     def __init__(self):
         self.trees = []
         self.count = 0
-        
+        self.min = None
+
+    def __repr__(self):
+        return repr(self.trees)
+
     def insert(self, value: int) -> None:
         """
         Ajoute une valeur dans l'arbre
@@ -62,6 +66,8 @@ class FibonacciHeap(Heap):
         new_tree = Tree()
         new_tree.add_value(value)
         self.trees.append(new_tree)
+        if self.min is None or self.min > value:
+            self.min = value
         self.count += 1
         pass
 
@@ -69,7 +75,10 @@ class FibonacciHeap(Heap):
         """
         Retourne la valeur minimum dans l'arbre
         """
-        return int(min(tree.children[0] for tree in self.trees))
+
+        self.min = int(min(tree.children[0] for tree in self.trees)) if len(self.trees) else None
+
+        return self.min
 
     def delete_min(self) -> int:
         """
@@ -79,73 +88,99 @@ class FibonacciHeap(Heap):
 
         for index, tree in enumerate(self.trees):
             if tree.children[0] == min_value:
-                self.trees.remove(tree)
-                tree.children.remove(0)
+                tree.children.remove(tree.children[0])
                 for subtree in tree.children:
                     self.trees.insert(index, subtree)
-                    # Modifier le self.count
+                    self.count += 1
+                self.trees.remove(tree)
+                self.count -= 1
 
-        return self.find_min()
+        return min_value
 
-    def merge(self, fibonnaci_heap: Heap) -> None:
+    def merge(self, fibonnaci_heap=None) -> None: 
         """
         Fusionne deux arbres
         """
-        trees_sizes = [tree.size for tree in self.trees]
-        min_size = min(set(z for z in trees_sizes if trees_sizes.count(z) > 1))
-        first_tree = None
-        last_tree = None
 
-        for tree in self.trees:
-            if (tree.size == min_size):
-                first_tree = tree
-                break
+        if fibonnaci_heap:
+            if fibonnaci_heap.min < self.min:
+                self.min = fibonnaci_heap.min
+            for subtree in fibonnaci_heap.trees:
+                self.trees.append(subtree)
+                self.count += 1
+        else:
+            trees_sizes = [tree.size for tree in self.trees]
+            min_size = min(set(z for z in trees_sizes if trees_sizes.count(z) > 1))
+            first_tree = None
+            last_tree = None
 
-        for tree in self.trees[::-1]:
-            if (tree.size == min_size):
-                last_tree = tree
-                break
+            for tree in self.trees:
+                if (tree.size == min_size):
+                    first_tree = tree
+                    break
 
-        if first_tree.children[0] < last_tree.children[0]:
-            first_tree.add_value(last_tree)
-            self.trees.remove(last_tree)
-        elif first_tree.children[0] > last_tree.children[0]:
-            last_tree.add_value(first_tree)
-            self.trees.remove(first_tree)
-        pass
+            for tree in self.trees[::-1]:
+                if (tree.size == min_size):
+                    last_tree = tree
+                    break
+
+            if first_tree.children[0] < last_tree.children[0]:
+                first_tree.add_value(last_tree)
+                self.trees.remove(last_tree)
+                self.count -= 1
+            elif first_tree.children[0] > last_tree.children[0]:
+                last_tree.add_value(first_tree)
+                self.trees.remove(first_tree)
+                self.count -= 1
+
+    def consolidate(self) -> None:
+        """
+        Fusionne l'arbre au maximum
+        """
+        vertically = None
+
+        while vertically != 0:
+            trees_sizes = [tree.size for tree in self.trees]
+            min_array = [z for z in trees_sizes if trees_sizes.count(z) > 1]
+            min_size = min(set(min_array)) if set(min_array) else 0
+            vertically = math.frexp(min_array.count(min_size))[1] - 1 if min_size else 0
+            horizontally = math.floor(min_array.count(min_size) / 2)
+
+            for h in range(horizontally):
+                self.merge()
 
 
 
-# Création de l'arbre
-fheap = FibonacciHeap()
+# def test_heap(heap, heap2):
+#     heap.insert(5)
+#     heap.insert(1)
+#     heap.insert(10)
+#     heap.insert(0)
 
-# Définition des valeurs de départ
-data = [1, 3, 12, 31, 5, 8, 11, 4, 0, 7]
+#     heap2.insert(2)
+#     heap2.insert(10)
+#     heap2.insert(15)
+#     heap2.insert(12)
 
-# Ajout de chaque valeur dans l'arbre
-for value in data:
-    fheap.insert(value)
+#     heap2.consolidate()
 
-print('First load :', fheap.trees)
+#     heap.merge(heap2)
 
-print('Minimum value :', fheap.find_min())
+#     heap.consolidate()
 
-fheap.merge(fheap)
-# print(fheap.trees)
-fheap.merge(fheap)
-# print(fheap.trees)
-fheap.merge(fheap)
-# print(fheap.trees)
-fheap.merge(fheap)
-# print(fheap.trees)
-fheap.merge(fheap)
-# print(fheap.trees)
-fheap.merge(fheap)
-# print(fheap.trees)
-fheap.merge(fheap)
-# print(fheap.trees)
-fheap.merge(fheap)
+#     heap.delete_min()
+#     heap.delete_min()
+#     heap.delete_min()
 
-print('Last load  :', fheap.trees)
+#     heap.insert(3)
+#     heap.insert(7)
+#     heap.insert(4)
+#     heap.insert(8)
 
-print('Delete min value, new min value :', fheap.delete_min())
+#     heap.consolidate()
+
+#     print(heap.trees)
+
+# heap = FibonacciHeap()
+# heap2 = FibonacciHeap()
+# test_heap(heap, heap2)
